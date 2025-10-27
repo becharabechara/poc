@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartNotes.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3391f90bb8f05026871a64f3e8b9578319fd82c7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7dce1a79e643af0946edd46e7ca4f70d330c0f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartNotes.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartNotes.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

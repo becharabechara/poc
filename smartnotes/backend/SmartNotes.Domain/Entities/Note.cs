@@ -7,10 +7,30 @@ namespace SmartNotes.Domain.Entities;
 
 public class Note
 {
+    private string? _title;
+    private string? _content;
+    private IReadOnlyCollection<Tag>? _tags;
+
     public Guid Id { get; private set; }
-    public string? Title { get; private set; }
-    public string? Content { get; private set; }
-    public IReadOnlyCollection<Tag>? Tags { get; private set; }
+    
+    public string? Title 
+    { 
+        get => _title;
+        private set => _title = value;
+    }
+    
+    public string? Content 
+    { 
+        get => _content;
+        private set => _content = value;
+    }
+    
+    public IReadOnlyCollection<Tag>? Tags 
+    { 
+        get => _tags;
+        private set => _tags = value;
+    }
+    
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
@@ -44,12 +64,12 @@ public class Note
             throw new ArgumentException("Title cannot be empty.", nameof(title));
         if (title.Length > 200)
             throw new ArgumentException("Title cannot exceed 200 characters.", nameof(title));
-        Title = title;
+        _title = title;
     }
 
     private void SetContent(string content)
     {
-        Content = content ?? string.Empty;
+        _content = content ?? string.Empty;
     }
 
     private void SetTags(IEnumerable<Tag>? tags)
@@ -57,6 +77,6 @@ public class Note
         var tagList = tags?.ToList() ?? new List<Tag>();
         if (tagList.Count != tagList.Distinct().Count())
             throw new ArgumentException("Tags must be unique.", nameof(tags));
-        Tags = tagList.AsReadOnly();
+        _tags = tagList.AsReadOnly();
     }
 }
