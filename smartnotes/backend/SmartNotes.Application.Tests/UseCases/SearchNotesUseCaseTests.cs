@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,5 +96,48 @@ public class SearchNotesUseCaseTests
         // Assert
         Assert.NotNull(result);
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Constructor_WithNullRepository_ShouldThrowArgumentNullException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new SearchNotesUseCase(null!));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WithNullRequest_ShouldThrowArgumentNullException()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _useCase.ExecuteAsync(null!));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WithNotesHavingEmptyTags_ShouldHandleGracefully()
+    {
+        // Arrange
+        var request = new SearchNotesRequest
+        {
+            Keyword = "test",
+            Tags = new List<string>()
+        };
+
+        var notes = new List<Note>
+        {
+            new Note("Test Note", "Content", new List<Tag>()) // Empty tags
+        };
+
+        _noteRepositoryMock.Setup(r => r.SearchAsync("test", It.IsAny<IEnumerable<string>>()))
+            .ReturnsAsync(notes);
+
+        // Act
+        var result = await _useCase.ExecuteAsync(request);
+
+        // Assert
+        Assert.NotNull(result);
+        var resultList = result.ToList();
+        Assert.Single(resultList);
+        Assert.Equal("Test Note", resultList[0].Title);
+        Assert.Empty(resultList[0].Tags);
     }
 }

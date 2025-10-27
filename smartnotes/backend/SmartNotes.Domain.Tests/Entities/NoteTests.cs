@@ -60,8 +60,8 @@ public class NoteTests
 
         Assert.Equal(newTitle, note.Title);
         Assert.Equal(newContent, note.Content);
-        Assert.Single(note.Tags);
-        Assert.Equal("new", note.Tags.First().Value);
+        Assert.Single(note.Tags!);
+        Assert.Equal("new", note.Tags!.First().Value);
         Assert.True(note.UpdatedAt > note.CreatedAt);
     }
 
@@ -74,7 +74,7 @@ public class NoteTests
     [Fact]
     public void CreateNote_WithNullContent_ShouldSetEmptyContent()
     {
-        var note = new Note("Title", null, null);
+        var note = new Note("Title", null!, null);
         Assert.Equal(string.Empty, note.Content);
     }
 
@@ -99,5 +99,95 @@ public class NoteTests
         var note = new Note("Title", "content", null);
         var tags = new[] { new Tag("test"), new Tag("test") };
         Assert.Throws<ArgumentException>(() => note.Update("New Title", "content", tags));
+    }
+
+    [Fact]
+    public void CreateNote_WithNullTitle_ShouldThrowException()
+    {
+        Assert.Throws<ArgumentException>(() => new Note(null!, "content", null));
+    }
+
+    [Fact]
+    public void CreateNote_WithEmptyContent_ShouldSucceed()
+    {
+        var note = new Note("Title", "", null);
+        Assert.Equal("", note.Content);
+    }
+
+    [Fact]
+    public void UpdateNote_WithNullTitle_ShouldThrowException()
+    {
+        var note = new Note("Title", "content", null);
+        Assert.Throws<ArgumentException>(() => note.Update(null!, "content", null));
+    }
+
+    [Fact]
+    public void UpdateNote_WithEmptyTitle_ShouldThrowException()
+    {
+        var note = new Note("Title", "content", null);
+        Assert.Throws<ArgumentException>(() => note.Update("", "content", null));
+    }
+
+    [Fact]
+    public void UpdateNote_WithTitleTooLong_ShouldThrowException()
+    {
+        var note = new Note("Title", "content", null);
+        var longTitle = new string('a', 201);
+        Assert.Throws<ArgumentException>(() => note.Update(longTitle, "content", null));
+    }
+
+    [Fact]
+    public void UpdateNote_WithNullContent_ShouldSetEmptyContent()
+    {
+        var note = new Note("Title", "old content", null);
+        note.Update("New Title", null!, null);
+        Assert.Equal("", note.Content);
+    }
+
+    [Fact]
+    public void CreateNote_WithMaxLengthTitle_ShouldSucceed()
+    {
+        var maxTitle = new string('a', 200);
+        var note = new Note(maxTitle, "content", null);
+        Assert.Equal(maxTitle, note.Title);
+    }
+
+    [Fact]
+    public void CreateNote_WithMultipleTags_ShouldSucceed()
+    {
+        var tags = new[] { new Tag("tag1"), new Tag("tag2"), new Tag("tag3") };
+        var note = new Note("Title", "content", tags);
+        Assert.Equal(3, note.Tags!.Count);
+    }
+
+    [Fact]
+    public void UpdateNote_ShouldPreserveId()
+    {
+        var note = new Note("Title", "content", null);
+        var originalId = note.Id;
+        
+        note.Update("New Title", "new content", null);
+        
+        Assert.Equal(originalId, note.Id);
+    }
+
+    [Fact]
+    public void UpdateNote_ShouldPreserveCreatedAt()
+    {
+        var note = new Note("Title", "content", null);
+        var originalCreatedAt = note.CreatedAt;
+        
+        note.Update("New Title", "new content", null);
+        
+        Assert.Equal(originalCreatedAt, note.CreatedAt);
+    }
+
+    [Fact]
+    public void CreateNote_ShouldGenerateUniqueIds()
+    {
+        var note1 = new Note("Title 1", "content", null);
+        var note2 = new Note("Title 2", "content", null);
+        
+        Assert.NotEqual(note1.Id, note2.Id);
     }
 }

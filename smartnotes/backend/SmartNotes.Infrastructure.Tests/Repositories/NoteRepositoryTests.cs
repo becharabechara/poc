@@ -231,5 +231,281 @@ public class NoteRepositoryTests : DatabaseTestBase
         Assert.Single(results2);
         Assert.Single(results3);
     }
-}
+
+    [Fact]
+    public async Task AddAsync_ShouldThrowForNullNote()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.AddAsync(null!));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldThrowForNullNote()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateAsync(null!));
+    }
+
+    [Fact]
+    public async Task ExistsAsync_ShouldReturnTrueForExistingNote()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Act
+        var exists = await _repository.ExistsAsync(note.Id);
+
+        // Assert
+        Assert.True(exists);
+    }
+
+    [Fact]
+    public async Task ExistsAsync_ShouldReturnFalseForNonExistentNote()
+    {
+        // Arrange
+        var nonExistentId = Guid.NewGuid();
+
+        // Act
+        var exists = await _repository.ExistsAsync(nonExistentId);
+
+        // Assert
+        Assert.False(exists);
+    }
+
+    [Fact]
+    public async Task ExistsAsync_ShouldSupportCancellationToken()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        var exists = await _repository.ExistsAsync(note.Id, cts.Token);
+
+        // Assert
+        Assert.True(exists);
+    }
+
+    [Fact]
+    public async Task CountAsync_ShouldReturnCorrectCount()
+    {
+        // Arrange
+        var note1 = new Note("Note 1", "Content 1", new List<Tag>());
+        var note2 = new Note("Note 2", "Content 2", new List<Tag>());
+        var note3 = new Note("Note 3", "Content 3", new List<Tag>());
+
+        await _repository.AddAsync(note1);
+        await _repository.AddAsync(note2);
+        await _repository.AddAsync(note3);
+
+        // Act
+        var count = await _repository.CountAsync();
+
+        // Assert
+        Assert.Equal(3, count);
+    }
+
+    [Fact]
+    public async Task CountAsync_ShouldSupportCancellationToken()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        var count = await _repository.CountAsync(cts.Token);
+
+        // Assert
+        Assert.Equal(1, count);
+    }
+
+    [Fact]
+    public async Task GetDistinctTagsAsync_ShouldReturnUniqueTagsSorted()
+    {
+        // Arrange
+        var note1 = new Note("Note 1", "Content 1", new List<Tag> { new("c#"), new("programming") });
+        var note2 = new Note("Note 2", "Content 2", new List<Tag> { new("javascript"), new("programming") });
+        var note3 = new Note("Note 3", "Content 3", new List<Tag> { new("backend"), new("c#") });
+
+        await _repository.AddAsync(note1);
+        await _repository.AddAsync(note2);
+        await _repository.AddAsync(note3);
+
+        // Act
+        var distinctTags = await _repository.GetDistinctTagsAsync();
+
+        // Assert
+        Assert.Equal(4, distinctTags.Count);
+        Assert.Equal(new[] { "backend", "c#", "javascript", "programming" }, distinctTags.OrderBy(t => t));
+    }
+
+    [Fact]
+    public async Task GetDistinctTagsAsync_ShouldReturnEmptyForNotesWithoutTags()
+    {
+        // Arrange
+        var note = new Note("Note without tags", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Act
+        var distinctTags = await _repository.GetDistinctTagsAsync();
+
+        // Assert
+        Assert.Empty(distinctTags);
+    }
+
+    [Fact]
+    public async Task GetDistinctTagsAsync_ShouldSupportCancellationToken()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag> { new("test") });
+        await _repository.AddAsync(note);
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        var distinctTags = await _repository.GetDistinctTagsAsync(cts.Token);
+
+        // Assert
+        Assert.Single(distinctTags);
+        Assert.Equal("test", distinctTags.First());
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithPagination_ShouldReturnCorrectPage()
+    {
+        // Arrange
+        for (int i = 1; i <= 15; i++)
+        {
+            var note = new Note($"Note {i:D2}", $"Content {i}", new List<Tag>());
+            await _repository.AddAsync(note);
+            await Task.Delay(1); // Ensure different timestamps
+        }
+
+        // Act
+        var firstPage = await _repository.GetAllAsync(1, 5);
+        var secondPage = await _repository.GetAllAsync(2, 5);
+        var thirdPage = await _repository.GetAllAsync(3, 5);
+
+        // Assert
+        Assert.Equal(5, firstPage.Count());
+        Assert.Equal(5, secondPage.Count());
+        Assert.Equal(5, thirdPage.Count());
+
+        // Verify ordering (most recent first)
+        var firstPageList = firstPage.ToList();
+        Assert.True(firstPageList[0].UpdatedAt >= firstPageList[1].UpdatedAt);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithPagination_ShouldHandleInvalidParameters()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Act
+        var resultInvalidPage = await _repository.GetAllAsync(0, 5); // page < 1
+        var resultInvalidPageSize = await _repository.GetAllAsync(1, 0); // pageSize < 1
+        var resultLargePageSize = await _repository.GetAllAsync(1, 200); // pageSize > 100
+
+        // Assert
+        Assert.Single(resultInvalidPage); // Should default to page 1
+        Assert.Single(resultInvalidPageSize); // Should default to pageSize 10
+        Assert.Single(resultLargePageSize); // Should limit to pageSize 100
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithPagination_ShouldSupportCancellationToken()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        var result = await _repository.GetAllAsync(1, 10, cts.Token);
+
+        // Assert
+        Assert.Single(result);
+    }
+
+    [Fact]
+    public async Task SearchAsync_ShouldHandleWhitespaceKeyword()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Act
+        var resultWithSpaces = await _repository.SearchAsync("   ", new List<string>());
+        var resultWithTabs = await _repository.SearchAsync("\t\t", new List<string>());
+
+        // Assert
+        Assert.Single(resultWithSpaces); // Should return all notes when keyword is whitespace
+        Assert.Single(resultWithTabs);
+    }
+
+    [Fact]
+    public async Task SearchAsync_ShouldHandleEmptyTagsList()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag> { new("test") });
+        await _repository.AddAsync(note);
+
+        // Act
+        var result = await _repository.SearchAsync("test", new List<string>());
+
+        // Assert
+        Assert.Single(result);
+    }
+
+    [Fact]
+    public async Task SearchAsync_ShouldHandleMultipleTags()
+    {
+        // Arrange
+        var note1 = new Note("Note 1", "Content", new List<Tag> { new("tag1"), new("tag2"), new("tag3") });
+        var note2 = new Note("Note 2", "Content", new List<Tag> { new("tag1"), new("tag2") });
+        var note3 = new Note("Note 3", "Content", new List<Tag> { new("tag1") });
+
+        await _repository.AddAsync(note1);
+        await _repository.AddAsync(note2);
+        await _repository.AddAsync(note3);
+
+        // Act - Search for notes that have both tag1 AND tag2
+        var result = await _repository.SearchAsync(null, new List<string> { "tag1", "tag2" });
+
+        // Assert
+        Assert.Equal(2, result.Count()); // Only note1 and note2 have both tags
+        Assert.Contains(result, n => n.Title == "Note 1");
+        Assert.Contains(result, n => n.Title == "Note 2");
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WithTrackedEntity_ShouldHandleEntityState()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Use a separate context to avoid tracking conflicts
+        using var newContext = CreateNewDbContext();
+        var newRepository = new SmartNotes.Infrastructure.Repositories.NoteRepository(newContext);
+
+        // Act
+        await newRepository.DeleteAsync(note.Id);
+
+        // Assert
+        var deletedNote = await newRepository.GetByIdAsync(note.Id);
+        Assert.Null(deletedNote);
+    }
+
+    [Fact]
+    public void NoteRepository_Constructor_ShouldThrowForNullContext()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => 
+            new SmartNotes.Infrastructure.Repositories.NoteRepository(null!));
+    }
 }
