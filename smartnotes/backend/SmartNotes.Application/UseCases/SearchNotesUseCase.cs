@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,11 +13,13 @@ public class SearchNotesUseCase
 
     public SearchNotesUseCase(INoteRepository noteRepository)
     {
-        _noteRepository = noteRepository;
+        _noteRepository = noteRepository ?? throw new ArgumentNullException(nameof(noteRepository));
     }
 
     public async Task<IEnumerable<NoteResponse>> ExecuteAsync(SearchNotesRequest request)
     {
+        if (request == null) throw new ArgumentNullException(nameof(request));
+        
         var notes = await _noteRepository.SearchAsync(request.Keyword, request.Tags);
 
         return notes.Select(note => new NoteResponse

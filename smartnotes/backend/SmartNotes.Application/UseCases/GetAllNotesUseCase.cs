@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ public class GetAllNotesUseCase
 
     public GetAllNotesUseCase(INoteRepository noteRepository)
     {
-        _noteRepository = noteRepository;
+        _noteRepository = noteRepository ?? throw new ArgumentNullException(nameof(noteRepository));
     }
 
     public async Task<IEnumerable<NoteResponse>> ExecuteAsync()
