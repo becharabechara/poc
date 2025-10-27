@@ -23,6 +23,11 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 
+# Build results
+**/bin/
+**/obj/
+**/out/
+
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
@@ -82,10 +87,15 @@ StyleCopReport.xml
 # Coverage reports
 coverage/
 coveragereport/
+domain-coverage/
+app-coverage/
+DomainTestResults/
+AppTestResults/
 *.coverage
 *.coveragexml
 *.cobertura.xml
 TestResults/
+test-results/
 
 # Test output
 [Tt]est[Rr]esult*/
@@ -151,6 +161,9 @@ dist/
 # Docker
 .dockerignore
 Dockerfile.dockerignore
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
 
 # Database
 *.db
@@ -159,6 +172,10 @@ Dockerfile.dockerignore
 
 # PostgreSQL
 *.sql
+*.dump
+*.backup
+pgdata/
+postgres-data/
 
 # Logs
 logs/
@@ -299,3 +316,16 @@ $RECYCLE.BIN/
 appsettings.local.json
 appsettings.Development.json
 appsettings.*.local.json
+
+# SmartNotes specific
+# Database connection strings (if stored locally)
+connectionstrings.json
+connectionstrings.*.json
+
+# Coverage configuration backups
+coverlet.runsettings.bak
+Directory.Build.props.bak
+
+# PowerShell scripts output
+coverage-script-output.txt
+*.ps1.log

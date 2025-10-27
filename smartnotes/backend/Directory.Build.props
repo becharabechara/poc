@@ -1,0 +1,23 @@
+<Project>
+  <PropertyGroup>
+    <!-- Coverage exclusions for auto-generated files -->
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <ExcludeByFile>**/Migrations/**/*.cs</ExcludeByFile>
+    <Exclude>[*]*.Migrations.*</Exclude>
+  </PropertyGroup>
+  
+  <!-- For migration files specifically -->
+  <ItemGroup>
+    <CompilerGeneratedFiles Include="Migrations\*.cs" />
+    <CompilerGeneratedFiles Include="Migrations\*.Designer.cs" />
+  </ItemGroup>
+  
+  <!-- Exclude migration files from code coverage -->
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutput>../coverage/</CoverletOutput>
+    <MergeWith>../coverage/coverage.json</MergeWith>
+    <ExcludeByFile>**/Migrations/**</ExcludeByFile>
+    <Exclude>[*]*Migrations*,[*]*Migration*,[*]*ModelSnapshot*</Exclude>
+  </PropertyGroup>
+</Project>

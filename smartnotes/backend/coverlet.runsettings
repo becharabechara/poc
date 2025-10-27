@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>[SmartNotes.*]*</Include>
+          <Exclude>
+            <!-- Exclude auto-generated Entity Framework migrations -->
+            [SmartNotes.Infrastructure]*Migrations.*
+            [SmartNotes.Infrastructure]*Migration*
+            [SmartNotes.Infrastructure]*ModelSnapshot*
+            [SmartNotes.Infrastructure]*InitialCreate*
+            [SmartNotes.Infrastructure]*SmartNotesDbContextModelSnapshot*
+            
+            <!-- Exclude test assemblies -->
+            [*.Tests]*
+            [*Tests]*
+            [SmartNotes.*.Tests]*
+            
+            <!-- Exclude framework and third-party code -->
+            [Microsoft.*]*
+            [System.*]*
+            [Newtonsoft.*]*
+            [AutoMapper.*]*
+          </Exclude>
+          <ExcludeByAttribute>
+            <!-- Exclude methods/classes marked with these attributes -->
+            Obsolete,
+            GeneratedCodeAttribute,
+            CompilerGeneratedAttribute,
+            DebuggerNonUserCodeAttribute,
+            ExcludeFromCodeCoverageAttribute
+          </ExcludeByAttribute>
+          <ExcludeByFile>
+            <!-- Exclude specific file patterns for auto-generated files -->
+            **/Migrations/**/*.cs,
+            **/*Migration*.cs,
+            **/*ModelSnapshot*.cs,
+            **/20*_*.cs,
+            **/20*_*.Designer.cs,
+            **/bin/**,
+            **/obj/**,
+            **/*.Designer.cs,
+            **/*.generated.cs,
+            **/*AssemblyInfo.cs,
+            **/GlobalAssemblyInfo.cs
+          </ExcludeByFile>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
