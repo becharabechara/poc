@@ -9,3 +9,4 @@ C:\Projects\poc\smartnotes\backend\SmartNotes.Domain\obj\Debug\net8.0\SmartNotes
 C:\Projects\poc\smartnotes\backend\SmartNotes.Domain\obj\Debug\net8.0\refint\SmartNotes.Domain.dll
 C:\Projects\poc\smartnotes\backend\SmartNotes.Domain\obj\Debug\net8.0\SmartNotes.Domain.pdb
 C:\Projects\poc\smartnotes\backend\SmartNotes.Domain\obj\Debug\net8.0\ref\SmartNotes.Domain.dll
+C:\Projects\poc\smartnotes\backend\SmartNotes.Domain\obj\Debug\net8.0\SmartNotes.Domain.sourcelink.json

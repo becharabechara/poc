@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SmartNotes.Domain\SmartNotes.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

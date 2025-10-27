@@ -6,4 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartNotes.Application\SmartNotes.Application.csproj" />
+    <ProjectReference Include="..\SmartNotes.Infrastructure\SmartNotes.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

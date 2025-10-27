@@ -4,14 +4,76 @@
     "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj": {
+    "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj",
-        "projectName": "SmartNotes.Presentation",
-        "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj",
+        "projectUniqueName": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj",
+        "projectName": "SmartNotes.Application",
+        "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj",
         "packagesPath": "C:\\Users\\BecharaBECHARA\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\obj\\",
+        "outputPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\BecharaBECHARA\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj": {
+                "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.415/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj",
+        "projectName": "SmartNotes.Domain",
+        "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj",
+        "packagesPath": "C:\\Users\\BecharaBECHARA\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\BecharaBECHARA\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -42,6 +104,142 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.415/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Infrastructure\\SmartNotes.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Infrastructure\\SmartNotes.Infrastructure.csproj",
+        "projectName": "SmartNotes.Infrastructure",
+        "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Infrastructure\\SmartNotes.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\BecharaBECHARA\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\BecharaBECHARA\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj": {
+                "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj"
+              },
+              "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj": {
+                "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Domain\\SmartNotes.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.415/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj",
+        "projectName": "SmartNotes.Presentation",
+        "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\SmartNotes.Presentation.csproj",
+        "packagesPath": "C:\\Users\\BecharaBECHARA\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Presentation\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\BecharaBECHARA\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj": {
+                "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Application\\SmartNotes.Application.csproj"
+              },
+              "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Infrastructure\\SmartNotes.Infrastructure.csproj": {
+                "projectPath": "C:\\Projects\\poc\\smartnotes\\backend\\SmartNotes.Infrastructure\\SmartNotes.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.4.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

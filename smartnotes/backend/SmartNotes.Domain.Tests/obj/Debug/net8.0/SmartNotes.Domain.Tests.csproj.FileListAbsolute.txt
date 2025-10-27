@@ -100,3 +100,4 @@ C:\Projects\poc\smartnotes\backend\SmartNotes.Domain.Tests\obj\Debug\net8.0\refi
 C:\Projects\poc\smartnotes\backend\SmartNotes.Domain.Tests\obj\Debug\net8.0\SmartNotes.Domain.Tests.pdb
 C:\Projects\poc\smartnotes\backend\SmartNotes.Domain.Tests\obj\Debug\net8.0\SmartNotes.Domain.Tests.genruntimeconfig.cache
 C:\Projects\poc\smartnotes\backend\SmartNotes.Domain.Tests\obj\Debug\net8.0\ref\SmartNotes.Domain.Tests.dll
+C:\Projects\poc\smartnotes\backend\SmartNotes.Domain.Tests\obj\Debug\net8.0\SmartNotes.Domain.Tests.sourcelink.json
