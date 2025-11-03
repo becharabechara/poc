@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Plus, FileText, Tag, Home } from 'lucide-react';
+import { Search, Plus, FileText, Tag, Home, Sparkles } from 'lucide-react';
 import { cn } from '../utils';
 
 interface LayoutProps {
@@ -19,65 +19,57 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo and Navigation */}
-            <div className="flex items-center space-x-8">
-              <Link 
-                to="/" 
-                className="flex items-center space-x-2 text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
-              >
-                <FileText className="h-6 w-6" />
-                <span>SmartNotes</span>
-              </Link>
-              
-              <nav className="hidden md:flex space-x-6">
-                {navigation.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        'flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        isActive(item.href)
-                          ? 'text-primary-600 bg-primary-50'
-                          : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
+    <div className="App">
+      {/* Modern Header */}
+      <header className="app-header">
+        <div className="header-content">
+          {/* Logo and Navigation */}
+          <div className="flex items-center space-x-8">
+            <Link to="/" className="logo">
+              <div className="logo-icon">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <span>SmartNotes</span>
+            </Link>
+            
+            <nav className="nav-links hidden md:flex">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn('nav-link', isActive(item.href) && 'active')}
+                  >
+                    <Icon className="w-4 h-4 mr-1" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
-            {/* Actions */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigate('/create')}
-                className="btn-primary h-10 px-4"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Note
-              </button>
-            </div>
+          {/* Actions */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/create')}
+              className="btn-modern"
+            >
+              <Plus className="w-4 h-4" />
+              New Note
+            </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="main-content">
         {children}
       </main>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="grid grid-cols-3 gap-1 p-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-white/20 shadow-lg">
+        <div className="grid grid-cols-3 gap-1 p-3">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
@@ -85,10 +77,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  'flex flex-col items-center justify-center py-2 px-1 text-xs font-medium rounded-md transition-colors',
+                  'flex flex-col items-center justify-center py-3 px-2 text-xs font-medium rounded-lg transition-all',
                   isActive(item.href)
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                    ? 'text-blue-600 bg-blue-50 shadow-sm'
+                    : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50/50'
                 )}
               >
                 <Icon className="h-5 w-5 mb-1" />
@@ -98,7 +90,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           })}
           <button
             onClick={() => navigate('/create')}
-            className="flex flex-col items-center justify-center py-2 px-1 text-xs font-medium rounded-md text-primary-600 hover:bg-primary-50 transition-colors"
+            className="flex flex-col items-center justify-center py-3 px-2 text-xs font-medium rounded-lg text-blue-600 hover:bg-blue-50/50 transition-all"
           >
             <Plus className="h-5 w-5 mb-1" />
             <span>Create</span>
@@ -107,7 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
 
       {/* Spacer for mobile navigation */}
-      <div className="md:hidden h-20" />
+      <div className="md:hidden h-24" />
     </div>
   );
 };

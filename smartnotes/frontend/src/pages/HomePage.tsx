@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, FileText, Calendar, Tag } from 'lucide-react';
+import { Search, Plus, FileText, Calendar, Tag, Clock, Sparkles } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
 import { formatDate, cn } from '../utils';
 import { NoteResponse, SearchNotesRequest } from '../types';
@@ -26,31 +26,33 @@ const HomePage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">My Notes</h1>
-          <Link
-            to="/create"
-            className="btn-primary h-10 px-4"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Note
-          </Link>
+      <div className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div>
+            <div className="loading-skeleton h-8 w-48 mb-2"></div>
+            <div className="loading-skeleton h-4 w-32"></div>
+          </div>
+          <div className="loading-skeleton h-12 w-32 rounded-lg"></div>
         </div>
         
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="loading-skeleton h-16 rounded-2xl"></div>
+        
+        <div className="notes-grid">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="card p-6 animate-pulse">
-              <div className="h-5 bg-gray-200 rounded mb-3"></div>
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              </div>
-              <div className="flex justify-between items-center mt-4">
-                <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                <div className="flex space-x-1">
-                  <div className="h-5 w-12 bg-gray-200 rounded-full"></div>
-                  <div className="h-5 w-16 bg-gray-200 rounded-full"></div>
+            <div key={i} className="modern-card">
+              <div className="p-6 space-y-4">
+                <div className="loading-skeleton h-6 w-3/4"></div>
+                <div className="space-y-2">
+                  <div className="loading-skeleton h-4 w-full"></div>
+                  <div className="loading-skeleton h-4 w-4/5"></div>
+                  <div className="loading-skeleton h-4 w-3/5"></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="loading-skeleton h-3 w-24"></div>
+                  <div className="flex space-x-2">
+                    <div className="loading-skeleton h-6 w-16 rounded-full"></div>
+                    <div className="loading-skeleton h-6 w-20 rounded-full"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -62,108 +64,113 @@ const HomePage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          Failed to load notes
-        </h2>
-        <p className="text-gray-600 mb-4">
-          {error.message || 'Something went wrong while loading your notes.'}
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="btn-primary"
-        >
-          Try Again
-        </button>
+      <div className="empty-state">
+        <div className="modern-card p-8">
+          <FileText className="empty-state-icon" />
+          <h2 className="empty-state-title">
+            Failed to load notes
+          </h2>
+          <p className="empty-state-description">
+            {error.message || 'Something went wrong while loading your notes.'}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="btn-modern"
+          >
+            <Sparkles className="w-4 h-4" />
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+    <div className="space-y-8">
+      {/* Modern Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Notes</h1>
-          <p className="text-gray-600 mt-1">
-            {notes?.length || 0} {notes?.length === 1 ? 'note' : 'notes'} total
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Welcome back! ✨
+          </h1>
+          <p className="text-lg text-gray-600">
+            You have <span className="font-semibold text-gray-900">{notes?.length || 0}</span> {notes?.length === 1 ? 'note' : 'notes'} in your collection
           </p>
         </div>
         <Link
           to="/create"
-          className="btn-primary h-10 px-4 w-fit"
+          className="btn-modern"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          New Note
+          <Plus className="w-4 h-4" />
+          Create New Note
         </Link>
       </div>
 
-      {/* Quick Search */}
-      <div className="card p-4">
-        <div className="flex items-center space-x-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Quick search notes..."
-              className="input pl-10"
-              value={searchQuery.keyword || ''}
-              onChange={(e) => setSearchQuery({ ...searchQuery, keyword: e.target.value })}
-            />
-          </div>
-          <Link
-            to="/search"
-            className="btn-secondary h-10 px-4"
-          >
-            Advanced Search
-          </Link>
-        </div>
+      {/* Enhanced Search Bar */}
+      <div className="search-container">
+        <Search className="search-icon" />
+        <input
+          type="text"
+          placeholder="Search your notes..."
+          className="search-input"
+          value={searchQuery.keyword || ''}
+          onChange={(e) => setSearchQuery({ ...searchQuery, keyword: e.target.value })}
+        />
+        <Link
+          to="/search"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 btn-secondary-modern py-2 px-4 text-sm"
+        >
+          Advanced
+        </Link>
       </div>
 
       {/* Notes Grid */}
       {filteredNotes?.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="empty-state">
           {notes?.length === 0 ? (
-            <>
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                No notes yet
+            <div className="modern-card p-12">
+              <div className="empty-state-icon bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center">
+                <FileText className="w-8 h-8 text-blue-600" />
+              </div>
+              <h2 className="empty-state-title">
+                Your note journey starts here
               </h2>
-              <p className="text-gray-600 mb-6">
-                Get started by creating your first note.
+              <p className="empty-state-description">
+                Create your first note and start organizing your thoughts, ideas, and important information.
               </p>
-              <Link to="/create" className="btn-primary">
-                <Plus className="h-4 w-4 mr-2" />
+              <Link to="/create" className="btn-modern">
+                <Plus className="w-4 h-4" />
                 Create Your First Note
               </Link>
-            </>
+            </div>
           ) : (
-            <>
-              <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                No notes found
+            <div className="modern-card p-12">
+              <div className="empty-state-icon bg-gradient-to-br from-orange-100 to-red-100 rounded-2xl flex items-center justify-center">
+                <Search className="w-8 h-8 text-orange-600" />
+              </div>
+              <h2 className="empty-state-title">
+                No notes match your search
               </h2>
-              <p className="text-gray-600 mb-6">
-                Try adjusting your search criteria or create a new note.
+              <p className="empty-state-description">
+                Try adjusting your search terms or explore all your notes.
               </p>
-              <div className="flex justify-center space-x-4">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button
                   onClick={() => setSearchQuery({})}
-                  className="btn-secondary"
+                  className="btn-secondary-modern"
                 >
                   Clear Search
                 </button>
-                <Link to="/create" className="btn-primary">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Link to="/create" className="btn-modern">
+                  <Plus className="w-4 h-4" />
                   Create Note
                 </Link>
               </div>
-            </>
+            </div>
           )}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="notes-grid">
           {filteredNotes?.map((note) => (
             <NoteCard key={note.id} note={note} />
           ))}
@@ -178,37 +185,56 @@ interface NoteCardProps {
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
+  const getRandomGradient = () => {
+    const gradients = [
+      'from-blue-500 to-purple-600',
+      'from-green-500 to-teal-600',
+      'from-orange-500 to-red-600',
+      'from-pink-500 to-rose-600',
+      'from-indigo-500 to-blue-600',
+      'from-purple-500 to-pink-600'
+    ];
+    return gradients[Math.abs(note.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % gradients.length];
+  };
+
   return (
     <Link
       to={`/notes/${note.id}`}
-      className="card p-6 hover:shadow-md transition-shadow cursor-pointer group"
+      className="modern-card note-card"
     >
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2">
-          {note.title}
-        </h3>
-      </div>
-      
-      <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-        {note.content || 'No content'}
-      </p>
-      
-      <div className="flex justify-between items-end">
-        <div className="flex items-center text-xs text-gray-500">
-          <Calendar className="h-3 w-3 mr-1" />
-          {formatDate(note.updatedAt)}
+      <div className="note-card-content">
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="note-title">
+            {note.title}
+          </h3>
+          <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${getRandomGradient()} opacity-60`}></div>
+        </div>
+        
+        <p className="note-content-preview">
+          {note.content || 'No content available...'}
+        </p>
+        
+        <div className="note-metadata">
+          <div className="flex items-center">
+            <Clock className="w-3 h-3 mr-1" />
+            {formatDate(note.updatedAt)}
+          </div>
+          <div className="flex items-center">
+            <Tag className="w-3 h-3 mr-1" />
+            {note.tags.length} {note.tags.length === 1 ? 'tag' : 'tags'}
+          </div>
         </div>
         
         {note.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 max-w-32">
-            {note.tags.slice(0, 2).map((tag, index) => (
-              <span key={index} className="tag text-xs">
+          <div className="note-tags">
+            {note.tags.slice(0, 3).map((tag, index) => (
+              <span key={index} className="modern-tag">
                 {tag}
               </span>
             ))}
-            {note.tags.length > 2 && (
-              <span className="text-xs text-gray-500">
-                +{note.tags.length - 2}
+            {note.tags.length > 3 && (
+              <span className="modern-tag bg-gray-100 text-gray-600">
+                +{note.tags.length - 3} more
               </span>
             )}
           </div>

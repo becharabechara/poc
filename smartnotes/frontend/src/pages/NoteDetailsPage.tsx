@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Calendar, Tag, Clock, FileText, BookOpen, Sparkles } from 'lucide-react';
 import { useNote, useDeleteNote } from '../hooks/useNotes';
 import { formatDate } from '../utils';
 
@@ -11,7 +11,7 @@ const NoteDetailsPage: React.FC = () => {
   const deleteNoteMutation = useDeleteNote();
 
   const handleDelete = async () => {
-    if (!note || !window.confirm('Are you sure you want to delete this note?')) {
+    if (!note || !window.confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
       return;
     }
 
@@ -23,28 +23,48 @@ const NoteDetailsPage: React.FC = () => {
     }
   };
 
+  const getGradientForNote = (noteId: string) => {
+    const gradients = [
+      'from-blue-500 to-purple-600',
+      'from-green-500 to-teal-600',
+      'from-orange-500 to-red-600',
+      'from-pink-500 to-rose-600',
+      'from-indigo-500 to-blue-600',
+      'from-purple-500 to-pink-600'
+    ];
+    return gradients[Math.abs(noteId.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % gradients.length];
+  };
+
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="animate-pulse">
-          <div className="flex items-center justify-between mb-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="space-y-8">
+          {/* Header Skeleton */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="h-10 w-10 bg-gray-200 rounded"></div>
-              <div className="h-8 w-64 bg-gray-200 rounded"></div>
+              <div className="loading-skeleton w-12 h-12 rounded-xl"></div>
+              <div className="loading-skeleton w-48 h-8 rounded-lg"></div>
             </div>
             <div className="flex space-x-3">
-              <div className="h-10 w-20 bg-gray-200 rounded"></div>
-              <div className="h-10 w-20 bg-gray-200 rounded"></div>
+              <div className="loading-skeleton w-24 h-12 rounded-xl"></div>
+              <div className="loading-skeleton w-24 h-12 rounded-xl"></div>
             </div>
           </div>
           
-          <div className="card p-6 space-y-4">
-            <div className="h-6 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          {/* Content Skeleton */}
+          <div className="modern-card">
+            <div className="p-8 space-y-6">
+              <div className="loading-skeleton h-10 w-3/4 rounded-lg"></div>
+              <div className="loading-skeleton h-6 w-1/2 rounded-lg"></div>
+              <div className="space-y-3">
+                <div className="loading-skeleton h-4 w-full rounded"></div>
+                <div className="loading-skeleton h-4 w-full rounded"></div>
+                <div className="loading-skeleton h-4 w-3/4 rounded"></div>
+              </div>
+              <div className="flex space-x-2">
+                <div className="loading-skeleton h-8 w-20 rounded-full"></div>
+                <div className="loading-skeleton h-8 w-16 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -54,112 +74,201 @@ const NoteDetailsPage: React.FC = () => {
 
   if (error || !note) {
     return (
-      <div className="max-w-4xl mx-auto text-center py-12">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          Note not found
-        </h2>
-        <p className="text-gray-600 mb-6">
-          The note you're looking for doesn't exist or has been deleted.
-        </p>
-        <Link to="/" className="btn-primary">
-          Back to Notes
-        </Link>
+      <div className="max-w-5xl mx-auto">
+        <div className="empty-state">
+          <div className="modern-card p-12">
+            <div className="empty-state-icon bg-gradient-to-br from-red-100 to-orange-100 rounded-2xl flex items-center justify-center">
+              <FileText className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="empty-state-title">
+              Note not found
+            </h3>
+            <p className="empty-state-description">
+              The note you're looking for doesn't exist or has been deleted.
+            </p>
+            <Link to="/" className="btn-modern">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Notes
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-5xl mx-auto space-y-8">
+      {/* Modern Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate(-1)}
-            className="btn-ghost h-10 w-10 p-0"
+            className="btn-icon-modern"
+            title="Go back"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Note Details</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+              <BookOpen className="w-7 h-7 mr-3 text-blue-600" />
+              Note Details
+            </h1>
+            <p className="text-gray-600 mt-1">
+              View and manage your note
+            </p>
+          </div>
         </div>
         
         <div className="flex items-center space-x-3">
           <Link
             to={`/notes/${note.id}/edit`}
-            className="btn-secondary h-10 px-4"
+            className="btn-secondary-modern"
           >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
+            <Edit className="w-4 h-4" />
+            Edit Note
           </Link>
           <button
             onClick={handleDelete}
             disabled={deleteNoteMutation.isPending}
-            className="btn-ghost h-10 px-4 text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="btn-danger-modern"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
+            <Trash2 className="w-4 h-4" />
             {deleteNoteMutation.isPending ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       </div>
 
-      {/* Note Content */}
-      <div className="card p-6 space-y-6">
-        {/* Title */}
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">{note.title}</h2>
+      {/* Note Content Card */}
+      <div className="modern-card overflow-hidden">
+        {/* Header with gradient */}
+        <div className={`bg-gradient-to-r ${getGradientForNote(note.id)} p-8 text-white`}>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h2 className="text-4xl font-bold mb-2 break-words">
+                {note.title}
+              </h2>
+              <div className="flex flex-wrap items-center gap-4 text-white/80">
+                <div className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Created {formatDate(note.createdAt)}
+                </div>
+                {note.updatedAt !== note.createdAt && (
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Updated {formatDate(note.updatedAt)}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="ml-6">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <FileText className="w-8 h-8 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Metadata */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 border-b pb-4">
-          <div className="flex items-center">
-            <Calendar className="h-4 w-4 mr-1" />
-            Created: {formatDate(note.createdAt)}
-          </div>
-          {note.updatedAt !== note.createdAt && (
-            <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-1" />
-              Updated: {formatDate(note.updatedAt)}
+        {/* Content Section */}
+        <div className="p-8 space-y-8">
+          {/* Tags Section */}
+          {note.tags.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Tag className="w-5 h-5 mr-2 text-blue-600" />
+                Tags
+                <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                  {note.tags.length}
+                </span>
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {note.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="modern-tag bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 border border-blue-200"
+                  >
+                    <Tag className="w-3 h-3 mr-1" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
-        </div>
 
-        {/* Tags */}
-        {note.tags.length > 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <Tag className="h-4 w-4 mr-1" />
-              Tags
+          {/* Content Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+              <Sparkles className="w-5 h-5 mr-2 text-blue-600" />
+              Content
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {note.tags.map((tag, index) => (
-                <span key={index} className="tag">
-                  {tag}
-                </span>
-              ))}
+            <div className="content-display">
+              {note.content ? (
+                <div className="prose prose-lg max-w-none">
+                  <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                    {note.content}
+                  </div>
+                </div>
+              ) : (
+                <div className="empty-content">
+                  <div className="flex items-center justify-center py-12 text-gray-500">
+                    <div className="text-center">
+                      <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-lg font-medium mb-2">No content available</p>
+                      <p className="text-sm">This note doesn't have any content yet.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        {/* Content */}
-        <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-3">Content</h3>
-          <div className="prose max-w-none">
-            {note.content ? (
-              <div className="whitespace-pre-wrap text-gray-900">
-                {note.content}
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
+            <div className="stat-card">
+              <div className="flex items-center">
+                <div className="stat-icon bg-blue-100 text-blue-600">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="stat-label">Characters</p>
+                  <p className="stat-value">{note.content?.length || 0}</p>
+                </div>
               </div>
-            ) : (
-              <p className="text-gray-500 italic">No content</p>
-            )}
+            </div>
+            <div className="stat-card">
+              <div className="flex items-center">
+                <div className="stat-icon bg-green-100 text-green-600">
+                  <Tag className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="stat-label">Tags</p>
+                  <p className="stat-value">{note.tags.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="flex items-center">
+                <div className="stat-icon bg-purple-100 text-purple-600">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="stat-label">Last Updated</p>
+                  <p className="stat-value text-sm">{formatDate(note.updatedAt)}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Error Display */}
       {deleteNoteMutation.error && (
-        <div className="card p-4 border-red-200 bg-red-50 mt-4">
-          <p className="text-sm text-red-600">
-            {deleteNoteMutation.error.message || 'Failed to delete note. Please try again.'}
-          </p>
+        <div className="modern-card p-6 border-2 border-red-200 bg-red-50">
+          <div className="flex items-center">
+            <Trash2 className="w-5 h-5 text-red-600 mr-3" />
+            <p className="text-red-700 font-medium">
+              {deleteNoteMutation.error.message || 'Failed to delete note. Please try again.'}
+            </p>
+          </div>
         </div>
       )}
     </div>
