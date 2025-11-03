@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import './App.css';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import NoteDetailsPage from './pages/NoteDetailsPage';
@@ -29,7 +30,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="App">
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
