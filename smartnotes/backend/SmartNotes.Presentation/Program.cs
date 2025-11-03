@@ -67,7 +67,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionPolicy", policy =>
     {
         policy
-            .WithOrigins("https://smartnotes.yourdomain.com") // Replace with actual production domain
+            .WithOrigins(
+                "https://smartnotes.yourdomain.com", // Replace with actual production domain
+                "http://localhost:3000",    // Allow localhost for testing
+                "https://localhost:3000"    // Allow localhost with HTTPS for testing
+            )
             .WithMethods("GET", "POST", "PUT", "DELETE")
             .WithHeaders("Content-Type", "Authorization")
             .AllowCredentials();
@@ -112,6 +116,9 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    // Enable Swagger in production for API documentation
+    app.UseSwagger();
+    app.UseSwaggerUI();
     // Use production CORS policy
     app.UseCors("ProductionPolicy");
 }

@@ -235,6 +235,49 @@ public class NotesController : ControllerBase
     }
 
     /// <summary>
+    /// Searches for notes based on keywords
+    /// </summary>
+    /// <param name="keyword">The search keyword</param>
+    /// <param name="tags">Optional tags to filter by</param>
+    /// <returns>A collection of notes matching the search criteria</returns>
+    /// <response code="200">Returns the list of matching notes</response>
+    /// <response code="400">If the search parameters are invalid</response>
+    /// <response code="500">If there was an internal server error</response>
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(IEnumerable<NoteResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<NoteResponse>>> SearchNotes(
+        [FromQuery] string? keyword,
+        [FromQuery] IEnumerable<string>? tags)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(keyword) && (tags == null || !tags.Any()))
+            {
+                _logger.LogWarning("No search parameters provided");
+                return BadRequest(new { error = "At least one search parameter (keyword or tags) must be provided" });
+            }
+
+            var request = new SearchNotesRequest
+            {
+                Keyword = keyword,
+                Tags = tags
+            };
+
+            _logger.LogInformation("Searching notes with keyword: {Keyword}, tags: {Tags}", keyword, string.Join(",", tags ?? Array.Empty<string>()));
+            var notes = await _searchNotesUseCase.ExecuteAsync(request);
+            return Ok(notes);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while searching notes with keyword: {Keyword}", keyword);
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { error = "An error occurred while searching notes" });
+        }
+    }
+
+    /// <summary>
     /// Health check endpoint
     /// </summary>
     /// <returns>Health status</returns>
