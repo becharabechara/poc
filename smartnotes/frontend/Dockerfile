@@ -13,6 +13,9 @@ RUN npm ci --only=production --legacy-peer-deps
 # Copy source code
 COPY . .
 
+# Set environment variable explicitly
+ENV REACT_APP_API_URL=http://localhost:8080/api
+
 # Build the application
 RUN npm run build
 
