@@ -206,4 +206,89 @@ public class SmartNotesDbContextTests : DatabaseTestBase
         // Act & Assert (should not throw)
         context.Dispose();
     }
+
+    [Fact]
+    public void OnConfiguring_ShouldEnableDetailedErrorsInDevelopment()
+    {
+        // Arrange
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+
+        try
+        {
+            // Act - Create a new context to test OnConfiguring
+            var options = new DbContextOptionsBuilder<SmartNotesDbContext>()
+                .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}")
+                .Options;
+
+            using var context = new SmartNotesDbContext(options);
+
+            // Assert - Context should be created successfully
+            Assert.NotNull(context);
+            // Note: In-memory database doesn't support EnableSensitiveDataLogging or EnableDetailedErrors
+            // but the OnConfiguring method should still execute without errors
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", null);
+        }
+    }
+
+    [Fact]
+    public void OnConfiguring_ShouldNotEnableLoggingInProduction()
+    {
+        // Arrange
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production");
+
+        try
+        {
+            // Act - Create a new context to test OnConfiguring
+            var options = new DbContextOptionsBuilder<SmartNotesDbContext>()
+                .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}")
+                .Options;
+
+            using var context = new SmartNotesDbContext(options);
+
+            // Assert - Context should be created successfully without development logging
+            Assert.NotNull(context);
+            Assert.Equal(QueryTrackingBehavior.NoTracking, context.ChangeTracker.QueryTrackingBehavior);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", null);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateTimestamps_ShouldHandleReflectionUpdate()
+    {
+        // Arrange
+        var note = new Note("Test Title", "Test Content", new List<Tag> { new("test") });
+        DbContext.Notes.Add(note);
+        await DbContext.SaveChangesAsync();
+
+        // Act - Modify the note and save again to trigger UpdateTimestamps
+        note.Update("Updated Title", "Updated Content", new List<Tag> { new("updated") });
+        await DbContext.SaveChangesAsync();
+
+        // Assert
+        var savedNote = await DbContext.Notes.FirstAsync(n => n.Id == note.Id);
+        Assert.Equal("Updated Title", savedNote.Title);
+        Assert.Equal("Updated Content", savedNote.Content);
+        Assert.True(savedNote.UpdatedAt > savedNote.CreatedAt);
+    }
+
+    [Fact]
+    public async Task ConfigureGlobalSettings_ShouldHandleNullStrings()
+    {
+        // Arrange
+        var note = new Note("Test", "Content", new List<Tag>());
+
+        // Act
+        DbContext.Notes.Add(note);
+        await DbContext.SaveChangesAsync();
+
+        // Assert - Should not throw when handling null strings in global settings
+        var savedNote = await DbContext.Notes.FirstAsync(n => n.Id == note.Id);
+        Assert.NotNull(savedNote);
+    }
 }

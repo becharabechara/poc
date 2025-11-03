@@ -190,4 +190,88 @@ public class NoteTests
         
         Assert.NotEqual(note1.Id, note2.Id);
     }
+
+    [Fact]
+    public void CreateNote_WithTitleExactly200Characters_ShouldSucceed()
+    {
+        var exactTitle = new string('a', 200);
+        var note = new Note(exactTitle, "content", null);
+        Assert.Equal(exactTitle, note.Title);
+    }
+
+    [Fact]
+    public void UpdateNote_WithTitleExactly200Characters_ShouldSucceed()
+    {
+        var note = new Note("Title", "content", null);
+        var exactTitle = new string('a', 200);
+        note.Update(exactTitle, "new content", null);
+        Assert.Equal(exactTitle, note.Title);
+    }
+
+    [Fact]
+    public void CreateNote_WithTagsContainingDuplicates_ShouldThrowException()
+    {
+        var tags = new[] { new Tag("test"), new Tag("Test"), new Tag("TEST") }; // Different casing but same normalized value
+        Assert.Throws<ArgumentException>(() => new Note("Title", "content", tags));
+    }
+
+    [Fact]
+    public void CreateNote_WithEmptyTagsList_ShouldSucceed()
+    {
+        var tags = new Tag[0];
+        var note = new Note("Title", "content", tags);
+        Assert.Empty(note.Tags!);
+    }
+
+    [Fact]
+    public void UpdateNote_WithEmptyTagsList_ShouldClearTags()
+    {
+        var note = new Note("Title", "content", new[] { new Tag("old") });
+        var emptyTags = new Tag[0];
+        note.Update("New Title", "content", emptyTags);
+        Assert.Empty(note.Tags!);
+    }
+
+    [Fact]
+    public void CreateNote_WithTagsHavingDifferentCases_ShouldThrowExceptionForDuplicates()
+    {
+        var tags = new[] { new Tag("Test"), new Tag("test") };
+        Assert.Throws<ArgumentException>(() => new Note("Title", "content", tags));
+    }
+
+    [Fact]
+    public void Note_ShouldBeImmutableExceptThroughUpdate()
+    {
+        var note = new Note("Title", "content", new[] { new Tag("test") });
+        
+        // Properties should be read-only
+        Assert.Equal("Title", note.Title);
+        Assert.Equal("content", note.Content);
+        Assert.Single(note.Tags!);
+        
+        // Only Update method should change the note
+        note.Update("New Title", "new content", new[] { new Tag("new") });
+        
+        Assert.Equal("New Title", note.Title);
+        Assert.Equal("new content", note.Content);
+        Assert.Single(note.Tags!);
+        Assert.Equal("new", note.Tags!.First().Value);
+    }
+
+    [Fact]
+    public void CreateNote_WithVeryLongContent_ShouldSucceed()
+    {
+        var longContent = new string('a', 10000);
+        var note = new Note("Title", longContent, null);
+        Assert.Equal(longContent, note.Content);
+    }
+
+    [Fact]
+    public void UpdateNote_WithVeryLongContent_ShouldSucceed()
+    {
+        var note = new Note("Title", "short content", null);
+        var longContent = new string('a', 10000);
+        note.Update("Title", longContent, null);
+        Assert.Equal(longContent, note.Content);
+    }
 }

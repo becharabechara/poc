@@ -13,17 +13,19 @@
             [SmartNotes.Infrastructure]*ModelSnapshot*
             [SmartNotes.Infrastructure]*InitialCreate*
             [SmartNotes.Infrastructure]*SmartNotesDbContextModelSnapshot*
-            
+
             <!-- Exclude test assemblies -->
             [*.Tests]*
             [*Tests]*
             [SmartNotes.*.Tests]*
-            
+
             <!-- Exclude framework and third-party code -->
             [Microsoft.*]*
             [System.*]*
             [Newtonsoft.*]*
             [AutoMapper.*]*
+            [FluentValidation.*]*
+            [MediatR.*]*
           </Exclude>
           <ExcludeByAttribute>
             <!-- Exclude methods/classes marked with these attributes -->
@@ -48,6 +50,8 @@
             **/GlobalAssemblyInfo.cs
           </ExcludeByFile>
           <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SingleHit>true</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
         </Configuration>
       </DataCollector>
     </DataCollectors>

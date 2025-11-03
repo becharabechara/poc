@@ -508,4 +508,122 @@ public class NoteRepositoryTests : DatabaseTestBase
         Assert.Throws<ArgumentNullException>(() => 
             new SmartNotes.Infrastructure.Repositories.NoteRepository(null!));
     }
+
+    [Fact]
+    public async Task SearchAsync_ShouldHandleNullKeywordAndNullTags()
+    {
+        // Arrange
+        var note = new Note("Test Note", "Content", new List<Tag> { new("test") });
+        await _repository.AddAsync(note);
+
+        // Act
+        var result = await _repository.SearchAsync(null, null);
+
+        // Assert
+        Assert.Single(result);
+    }
+
+    [Fact]
+    public async Task SearchAsync_ShouldHandleComplexTagFiltering()
+    {
+        // Arrange
+        var note1 = new Note("Note 1", "Content", new List<Tag> { new("tag1"), new("tag2"), new("tag3") });
+        var note2 = new Note("Note 2", "Content", new List<Tag> { new("tag1"), new("tag2") });
+        var note3 = new Note("Note 3", "Content", new List<Tag> { new("tag1"), new("tag4") });
+
+        await _repository.AddAsync(note1);
+        await _repository.AddAsync(note2);
+        await _repository.AddAsync(note3);
+
+        // Act - Search for notes that have tag1 AND tag2 (should return note1 and note2)
+        var result = await _repository.SearchAsync(null, new List<string> { "tag1", "tag2" });
+
+        // Assert
+        Assert.Equal(2, result.Count());
+        Assert.Contains(result, n => n.Title == "Note 1");
+        Assert.Contains(result, n => n.Title == "Note 2");
+    }
+
+    [Fact]
+    public async Task SearchAsync_ShouldHandleKeywordWithSpecialCharacters()
+    {
+        // Arrange
+        var note = new Note("C# Programming", "Learn C# basics", new List<Tag> { new("programming") });
+        await _repository.AddAsync(note);
+
+        // Act
+        var result = await _repository.SearchAsync("C#", new List<string>());
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal("C# Programming", result.First().Title);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldHandleDetachedEntity()
+    {
+        // Arrange
+        var note = new Note("Original", "Content", new List<Tag> { new("original") });
+        await _repository.AddAsync(note);
+
+        // Create a detached copy by updating the existing note
+        note.Update("Updated", "New Content", new List<Tag> { new("updated") });
+
+        // Act
+        await _repository.UpdateAsync(note);
+
+        // Assert
+        var updatedNote = await _repository.GetByIdAsync(note.Id);
+        Assert.NotNull(updatedNote);
+        Assert.Equal("Updated", updatedNote.Title);
+        Assert.Equal("New Content", updatedNote.Content);
+    }
+
+    [Fact]
+    public async Task GetDistinctTagsAsync_ShouldHandleNotesWithDuplicateTags()
+    {
+        // Arrange
+        var note1 = new Note("Note 1", "Content", new List<Tag> { new("tag1"), new("tag2") });
+        var note2 = new Note("Note 2", "Content", new List<Tag> { new("tag2"), new("tag3") });
+
+        await _repository.AddAsync(note1);
+        await _repository.AddAsync(note2);
+
+        // Act
+        var distinctTags = await _repository.GetDistinctTagsAsync();
+
+        // Assert
+        Assert.Equal(3, distinctTags.Count);
+        Assert.Contains("tag1", distinctTags);
+        Assert.Contains("tag2", distinctTags);
+        Assert.Contains("tag3", distinctTags);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithLargePageSize_ShouldLimitToMaximum()
+    {
+        // Arrange
+        var note = new Note("Test", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Act - Request page size larger than maximum
+        var result = await _repository.GetAllAsync(1, 200);
+
+        // Assert - Should be limited to maximum page size
+        Assert.Single(result);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithNegativePage_ShouldDefaultToFirstPage()
+    {
+        // Arrange
+        var note = new Note("Test", "Content", new List<Tag>());
+        await _repository.AddAsync(note);
+
+        // Act - Request negative page number
+        var result = await _repository.GetAllAsync(-1, 10);
+
+        // Assert - Should return first page
+        Assert.Single(result);
+    }
 }

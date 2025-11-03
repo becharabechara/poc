@@ -89,6 +89,12 @@ coverage/
 coveragereport/
 domain-coverage/
 app-coverage/
+full-coverage/
+presentation-coverage/
+clean-coverage/
+combined-coverage/
+coverage-report/
+final-coverage/
 DomainTestResults/
 AppTestResults/
 *.coverage
@@ -96,6 +102,12 @@ AppTestResults/
 *.cobertura.xml
 TestResults/
 test-results/
+
+# Coverage scripts
+run-coverage*.ps1
+run-coverage*.bat
+run-coverage*.sh
+run-coverage.ps1
 
 # Test output
 [Tt]est[Rr]esult*/

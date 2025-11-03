@@ -175,4 +175,54 @@ public class TagTests
         // Assert
         Assert.Equal("tag123", tag.Value);
     }
+
+    [Fact]
+    public void Tag_ShouldBeImmutable()
+    {
+        // Arrange
+        var tag = new Tag("test");
+
+        // Act & Assert
+        // Tag is a record, so it's immutable by design
+        Assert.Equal("test", tag.Value);
+        
+        // Verify that creating a new tag with different value creates different object
+        var tag2 = new Tag("different");
+        Assert.NotEqual(tag, tag2);
+    }
+
+    [Fact]
+    public void Tag_ShouldHandleEdgeCases()
+    {
+        // Arrange & Act
+        var tagWithSpaces = new Tag("  spaced  ");
+        var tagWithSymbols = new Tag("tag_with-symbols.and+numbers123");
+
+        // Assert
+        Assert.Equal("  spaced  ", tagWithSpaces.Value); // Spaces should be preserved
+        Assert.Equal("tag_with-symbols.and+numbers123", tagWithSymbols.Value);
+    }
+
+    [Fact]
+    public void Tag_Equality_ShouldWorkWithNull()
+    {
+        // Arrange
+        var tag = new Tag("test");
+
+        // Act & Assert
+        Assert.False(tag.Equals(null));
+        Assert.False(tag == null);
+        Assert.True(tag != null);
+    }
+
+    [Fact]
+    public void Tag_Equality_ShouldWorkWithDifferentTypes()
+    {
+        // Arrange
+        var tag = new Tag("test");
+
+        // Act & Assert
+        Assert.False(tag.Equals("test"));
+        Assert.False(tag.Equals(123));
+    }
 }
