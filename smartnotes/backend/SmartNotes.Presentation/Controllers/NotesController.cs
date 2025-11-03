@@ -235,42 +235,14 @@ public class NotesController : ControllerBase
     }
 
     /// <summary>
-    /// Searches for notes based on keywords and/or tags
+    /// Health check endpoint
     /// </summary>
-    /// <param name="keyword">Optional keyword to search in title and content</param>
-    /// <param name="tags">Optional comma-separated list of tags to filter by</param>
-    /// <returns>A collection of notes matching the search criteria</returns>
-    /// <response code="200">Returns the search results</response>
-    /// <response code="500">If there was an internal server error</response>
-    [HttpGet("search")]
-    [ProducesResponseType(typeof(IEnumerable<NoteResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<NoteResponse>>> SearchNotes(
-        [FromQuery] string? keyword = null,
-        [FromQuery] string? tags = null)
+    /// <returns>Health status</returns>
+    /// <response code="200">Service is healthy</response>
+    [HttpGet("health")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult Health()
     {
-        try
-        {
-            _logger.LogInformation("Searching notes with keyword: {Keyword}, tags: {Tags}", keyword, tags);
-            
-            var searchRequest = new SearchNotesRequest
-            {
-                Keyword = keyword,
-                Tags = !string.IsNullOrWhiteSpace(tags) 
-                    ? tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                          .Select(t => t.Trim())
-                          .Where(t => !string.IsNullOrEmpty(t))
-                    : null
-            };
-
-            var notes = await _searchNotesUseCase.ExecuteAsync(searchRequest);
-            return Ok(notes);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while searching notes");
-            return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { error = "An error occurred while searching notes" });
-        }
+        return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
     }
 }
